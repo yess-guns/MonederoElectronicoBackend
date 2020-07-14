@@ -3,7 +3,7 @@
     <b-row>
       <b-col>
         <h1>Clientes</h1>
-        <b-button variant="primary">Nuevo</b-button>
+        <NuevoCliente/>
       </b-col>
     </b-row>
     <b-row>
@@ -17,9 +17,13 @@
 </template>
 
 <script>
+import NuevoCliente from '@/components/Clientes/NuevoCliente'
 import axios from 'axios';
 
 export default {
+  components: {
+    NuevoCliente
+  },
   data () {
     return {
       clientes: [],
