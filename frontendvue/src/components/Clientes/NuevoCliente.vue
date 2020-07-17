@@ -16,8 +16,13 @@
                 <b-form-input
                     type="text"
                     v-model="form.codigo"
+                    :state="codiState(form.codigo)"
+                    aria-describedby="input-live-help validar-codigo"
                     placeholder="Código de barras">
                 </b-form-input>
+                <b-form-invalid-feedback id="validar-codigo">
+                  Debe ingresar los 10 digítos numericos de la tarjeta
+                </b-form-invalid-feedback>
               </b-form-group>
             </b-col>
             <b-col>
@@ -25,8 +30,13 @@
                 <b-form-input
                     type="text"
                     v-model="form.nombreCliente"
+                    :state="nombreState(form.nombreCliente)"
+                    aria-describedby="input-live-help validar-nombre"
                     placeholder="Nombre">
                 </b-form-input>
+                <b-form-invalid-feedback id="validar-nombre">
+                  Debe ingresar el nombre completo
+                </b-form-invalid-feedback>
               </b-form-group>
             </b-col>
           </b-row>
@@ -36,9 +46,13 @@
                 <b-form-input
                     type="text"
                     v-model="form.apellidosCliente"
-                    placeholder="Apellidos"
-                    >
+                    :state="apeState(form.apellidosCliente)"
+                    aria-describedby="input-live-help validar-apellidos"
+                    placeholder="Apellidos">
                 </b-form-input>
+                <b-form-invalid-feedback id="validar-apellidos">
+                  Debe ingresar apellido(s) completo(s)
+                </b-form-invalid-feedback>
               </b-form-group>
             </b-col>
             <b-col>
@@ -46,8 +60,13 @@
                 <b-form-input
                     type="text"
                     v-model="form.telefono"
+                    :state="telState(form.telefono)"
+                    aria-describedby="input-live-help validar-telefono"
                     placeholder="Teléfono">
                 </b-form-input>
+                <b-form-invalid-feedback id="validar-telefono">
+                  Debe ingresar 10 digítos numericos
+                </b-form-invalid-feedback>
               </b-form-group>
             </b-col>
           </b-row>
@@ -69,10 +88,10 @@ export default {
   data () {
     return {
         form: {
-          nombreCliente: 'Juan',
-          apellidosCliente: 'Morales',
-          codigo: '321654684',
-          telefono: '15616556'
+          nombreCliente: '',
+          apellidosCliente: '',
+          codigo: '',
+          telefono: ''
         }        
     }
   },
@@ -80,17 +99,60 @@ export default {
     verModalNewCli(){
     this.$refs['my-modal'].show()
     },
+    codiState(codigo){
+      if (codigo == '' || codigo.length == 0){
+        return null
+      }else if (Math.floor(codigo).toString().length == 10){
+        return true
+      }else{
+        return false
+      }      
+    },
+    nombreState(nombre){
+      if (nombre == '' || nombre.length == 0){
+        return null
+      }else{
+        return nombre.length > 2 ? true : false
+      }      
+    },
+    apeState(apellido){
+     if (apellido == '' || apellido.length == 0){
+        return null
+      }else{
+        return apellido.length > 4 ? true : false
+      }
+    },
+    telState(telefono){
+      if (telefono == '' || telefono.length == 0){
+        return null
+      }else{
+        return Math.floor(telefono).toString().length == 10 ? true : false
+      }
+    },
     newCliente(){
-      const path = 'http://127.0.0.1:8000/api/clientes/'
-      axios.post(path, this.form).then((response) => {
-        this.form.nombreCliente = response.data.nombreCliente
-        this.form.apellidosCliente = response.data.apellidosCliente
-        this.form.codigo = response.data.codigo
-        this.form.telefono = response.data.telefono
-        swal("Guardado exitosamente", "", "success")
-      })
-      .catch((error) => {console.log(error)})
+      if(this.codiState(this.form.codigo) && this.nombreState(this.form.nombreCliente) && this.apeState(this.form.apellidosCliente) && this.telState(this.form.telefono)){
+
+        const path = 'http://127.0.0.1:8000/api/clientes/'
       
+        axios.post(path, this.form).then((response) => {
+          this.form.nombreCliente = ''
+          this.form.apellidosCliente = ''
+          this.form.codigo = ''
+          this.form.telefono = ''
+          this.$refs['my-modal'].hide()
+          this.$emit('actualizarLIstCliente')
+          swal({
+            title: "Guardado exitosamente",
+            text: "   ",
+            icon: "success",
+            timer: 2000,
+            button: false,
+          });
+        })
+        .catch((error) => {console.log(error)})
+
+        
+      }
     }
   },
   created() {
