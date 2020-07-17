@@ -3,12 +3,27 @@
     <b-row>
       <b-col>
         <h1>Clientes</h1>
-        <NuevoCliente/>
+        <NuevoCliente @actualizarLIstCliente="getClientes"/>
       </b-col>
     </b-row>
     <b-row>
-      <b-table striped hover :items="clientes" :fields="filas"></b-table>
+      <b-table striped hover :items="clientes" :fields="filas">
+        <template v-slot:cell(porcentaje)="row">
+          {{ row.value }} %
+        </template>
+        <template v-slot:cell(saldoMonedero)="row">
+          $ {{ row.value.toFixed(2) }}
+        </template>
+        <template v-slot:cell(estatus)="row">
+          {{ row.value == 1 ? 'Activo' : 'Inactivo' }} 
+        </template>
+        <template v-slot:cell(Acciones)="data">
+          <b-button @click="modalEdit(data.index)" variant="warning">Editar</b-button>
+        </template>
+      </b-table>
+      <EditCliente ref="editCliente" @actualizarLIstCliente="getClientes"/>
     </b-row>
+    
   </b-container>
 
   
@@ -18,11 +33,14 @@
 
 <script>
 import NuevoCliente from '@/components/Clientes/NuevoCliente'
+import EditCliente from '@/components/Clientes/EditCliente'
 import axios from 'axios';
+import swal from 'sweetalert'; 
 
 export default {
   components: {
-    NuevoCliente
+    NuevoCliente,
+    EditCliente
   },
   data () {
     return {
@@ -33,7 +51,8 @@ export default {
           { key: 'codigo', label: 'Código de barras', sortable: false, sortDirection: 'desc' },
           { key: 'porcentaje', label: 'Porcentaje descuento ', sortable: false, class: 'text-center' },
           { key: 'saldoMonedero', label: 'Saldo en monedero', sortable: false, class: 'text-center' },
-          { key: 'estatus', label: 'Estatus', sortable: false, class: 'text-center' }
+          { key: 'estatus', label: 'Estatus', sortable: false, class: 'text-center' },
+          'Acciones',
         ]
     }
   },
@@ -42,7 +61,11 @@ export default {
       const path = 'http://127.0.0.1:8000/api/clientes/'
       axios.get(path).then((response) => {
         this.clientes = response.data
+        console.log(response.data)
       })
+    },
+    modalEdit(index){
+      this.$refs.editCliente.verModalEditCli(this.clientes[index])
     }
   },
   created() {
