@@ -19,15 +19,12 @@
         </template>
         <template v-slot:cell(Acciones)="data">
           <b-button @click="modalEdit(data.index)" variant="warning">Editar</b-button>
+          <b-button @click="deleteCli(clientes[data.index])"variant="danger">Eliminar</b-button>
         </template>
       </b-table>
       <EditCliente ref="editCliente" @actualizarLIstCliente="getClientes"/>
-    </b-row>
-    
-  </b-container>
-
-  
-  
+    </b-row>    
+  </b-container>  
 
 </template>
 
@@ -66,6 +63,34 @@ export default {
     },
     modalEdit(index){
       this.$refs.editCliente.verModalEditCli(this.clientes[index])
+    },
+    deleteCli(data){
+      swal({
+        title: "¿Estas seguro de eliminar?",
+        text: `Cliente: ${data.nombreCliente} ${data.apellidosCliente}`,
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      })
+      .then((willDelete) => {
+        if (willDelete) {
+          const path = `http://127.0.0.1:8000/api/clientes/${data.id}/`
+          axios.delete(path).then((response) => {
+            this.getClientes()
+            swal({
+              title: "Eliminado exitosamente",
+              text: "   ",
+              icon: "success",
+              timer: 2000,
+              button: false,
+            });
+          })
+          .catch((error) => {console.log(error)})
+          
+        } else {
+          
+        }
+      });
     }
   },
   created() {
