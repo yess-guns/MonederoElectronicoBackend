@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
+import NewPago from '@/components/PagoDescuento/NewPago'
 
 import ListCliente from '@/components/Clientes/ListCliente'
 
@@ -9,9 +9,9 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/',
-      name: 'HelloWorld',
-      component: HelloWorld
+      path: '/nuevo-pago',
+      name: 'NewPago',
+      component: NewPago
     },
     {
       path: '/clientes',
