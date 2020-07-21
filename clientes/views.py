@@ -6,8 +6,8 @@ from .models import Clientes
 
 def view2(request, codigocli):    
     qs = Clientes.objects.filter(codigo=codigocli)
-    qs_json = serializers.serialize('json', qs)
-
+    #qs_json = serializers.serialize('json', qs)
+    json_response = {}
     for cliente in qs:
         json_response = {
             'id':cliente.pk, 
