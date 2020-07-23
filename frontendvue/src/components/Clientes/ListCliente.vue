@@ -55,7 +55,7 @@ export default {
   },
   methods: {
     getClientes(){
-      const path = 'http://127.0.0.1:8000/api/clientes/'
+      const path = `${process.env.BASE_URI}api/clientes/`
       axios.get(path).then((response) => {
         this.clientes = response.data
         console.log(response.data)
@@ -74,7 +74,7 @@ export default {
       })
       .then((willDelete) => {
         if (willDelete) {
-          const path = `http://127.0.0.1:8000/api/clientes/${data.id}/`
+          const path = `${process.env.BASE_URI}api/clientes/${data.id}/`
           axios.delete(path).then((response) => {
             this.getClientes()
             swal({

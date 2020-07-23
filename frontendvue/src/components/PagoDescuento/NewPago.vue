@@ -11,8 +11,15 @@
           <b-form-input
               type="text"
               v-model="pago.importeTotal"
+              @keypress="restrigirChars($event)"
+              @paste.prevent
+              :state="importeState(pago.importeTotal)"
+              aria-describedby="input-live-help validar-importe"
               placeholder="Ingrese el importe total">
           </b-form-input>
+          <b-form-invalid-feedback id="validar-importe">
+            Debe ingresar el importe total
+          </b-form-invalid-feedback>
         </b-form-group>
       </b-col>
       <b-col>
@@ -20,10 +27,17 @@
           <b-form-input
               type="text"
               v-model="codigo"
+              @keypress="restrigirChars($event)"
+              @paste.prevent
               @keyup.enter="buscarCliente()"
               :disabled="inputCodigo"
+              :state="codiState(codigo)"
+              aria-describedby="input-live-help validar-codigo"
               placeholder="Código de la tarjeta">
           </b-form-input>
+          <b-form-invalid-feedback id="validar-codigo">
+            Debe escanear ingresar los 10 digítos numericos de la tarjeta
+          </b-form-invalid-feedback>
         </b-form-group>
       </b-col>
     </b-row>
@@ -83,6 +97,7 @@ export default {
   data () {
     return {
       dataCliente: [],
+      codigo: '1234567893',
       inputCodigo: false,
       pago: {
         folio:'FLA-210720',
@@ -99,7 +114,7 @@ export default {
   methods: {
     buscarCliente(){
       let codigo = this.codigo
-      const path = `http://127.0.0.1:8000/cliente/codigo/${codigo}/`
+      const path = `${process.env.BASE_URI}cliente/codigo/${codigo}/`
       axios.get(path).then((response) => {
         this.dataCliente = response.data
         this.pago.porcentajePago = this.dataCliente.porcentaje
@@ -108,6 +123,31 @@ export default {
         this.inputCodigo = true
         console.log(response.data)
       })
+    },
+    codiState(codigo){
+      if (codigo == '' || codigo.length == 0){
+        return null
+      }else if (Math.floor(codigo).toString().length == 10){
+        return true
+      }else{
+        return false
+      }
+    },
+    importeState(importe){
+      if (importe == '' || importe.length == 0){
+        return null
+      }else if (Math.floor(importe).toString().length > 0 && importe > 0){
+        return true
+      }else{
+        return false
+      }
+    },
+    restrigirChars(event){
+      if (event.charCode === 0 || /\d/.test(String.fromCharCode(event.charCode))) {
+        return true
+      } else {
+          event.preventDefault();
+      }
     },
     pagar(){
       this.pago.cliente = this.dataCliente.id

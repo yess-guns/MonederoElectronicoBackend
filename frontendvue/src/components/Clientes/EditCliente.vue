@@ -9,6 +9,8 @@
                 <b-form-input
                     type="text"
                     v-model="form.codigo"
+                    @keypress="restrigirChars($event)"
+                    @paste.prevent
                     :state="codiState(form.codigo)"
                     aria-describedby="input-live-help validar-codigo"
                     placeholder="Código de barras">
@@ -53,6 +55,8 @@
                 <b-form-input
                     type="text"
                     v-model="form.telefono"
+                    @keypress="restrigirChars($event)"
+                    @paste.prevent
                     :state="telState(form.telefono)"
                     aria-describedby="input-live-help validar-telefono"
                     placeholder="Teléfono">
@@ -69,6 +73,8 @@
                 <b-form-input
                     type="text"
                     v-model="form.porcentaje"
+                    @keypress="restrigirChars($event)"
+                    @paste.prevent
                     :state="porcenState(form.porcentaje)"
                     aria-describedby="input-live-help validar-porcentaje"
                     placeholder="Porcentaje de descuento">
@@ -125,6 +131,13 @@ export default {
       this.$refs['my-modal-edit'].show()
       //console.log(datosCli)
     },
+    restrigirChars(event){
+      if (event.charCode === 0 || /\d/.test(String.fromCharCode(event.charCode))) {
+        return true
+      } else {
+          event.preventDefault();
+      }
+    },
     codiState(codigo){
       if (codigo == '' || codigo.length == 0){
         return null
@@ -166,7 +179,7 @@ export default {
     editCliente(){
       if(this.codiState(this.form.codigo) && this.nombreState(this.form.nombreCliente) && this.apeState(this.form.apellidosCliente) && this.telState(this.form.telefono) && this.porcenState(this.form.porcentaje)){
 
-        const path = `http://127.0.0.1:8000/api/clientes/${this.id}/`      
+        const path = `${process.env.BASE_URI}api/clientes/${this.id}/`      
         axios.put(path, this.form).then((response) => {
           this.$refs['my-modal-edit'].hide()
           swal("Guardado exitosamente", "", "success")

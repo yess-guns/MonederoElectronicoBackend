@@ -16,6 +16,8 @@
                 <b-form-input
                     type="text"
                     v-model="form.codigo"
+                    @keypress="restrigirChars($event)"
+                    @paste.prevent
                     :state="codiState(form.codigo)"
                     aria-describedby="input-live-help validar-codigo"
                     placeholder="Código de barras">
@@ -60,6 +62,8 @@
                 <b-form-input
                     type="text"
                     v-model="form.telefono"
+                    @keypress="restrigirChars($event)"
+                    @paste.prevent
                     :state="telState(form.telefono)"
                     aria-describedby="input-live-help validar-telefono"
                     placeholder="Teléfono">
@@ -99,6 +103,13 @@ export default {
     verModalNewCli(){
     this.$refs['my-modal'].show()
     },
+    restrigirChars(event){
+      if (event.charCode === 0 || /\d/.test(String.fromCharCode(event.charCode))) {
+        return true
+      } else {
+          event.preventDefault();
+      }
+    },
     codiState(codigo){
       if (codigo == '' || codigo.length == 0){
         return null
@@ -132,7 +143,7 @@ export default {
     newCliente(){
       if(this.codiState(this.form.codigo) && this.nombreState(this.form.nombreCliente) && this.apeState(this.form.apellidosCliente) && this.telState(this.form.telefono)){
 
-        const path = 'http://127.0.0.1:8000/api/clientes/'
+        const path = `${process.env.BASE_URI}api/clientes/`
       
         axios.post(path, this.form).then((response) => {
           this.form.nombreCliente = ''
