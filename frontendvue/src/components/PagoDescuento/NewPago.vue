@@ -63,6 +63,8 @@
             <b-form-input
                 type="text"
                 v-model="pago.importeEfectivoTarjeta"
+                @keypress="restrigirChars($event)"
+                @paste.prevent
                 placeholder="Ingrese el importe en efectivo">
             </b-form-input>
           </b-form-group>
@@ -75,6 +77,8 @@
             <b-form-input
                 type="text"
                 v-model="pago.importeMonedeto"
+                @keypress="restrigirChars($event)"
+                @paste.prevent
                 placeholder="Ingrese la cantidad que desee usar">
             </b-form-input>
           </b-form-group>
@@ -82,7 +86,7 @@
       </b-row>
       <b-row>
         <b-col>
-          <b-button variant="danger"> Cancelar </b-button> <b-button @click="pagar()" variant="primary"> Pagar </b-button>
+          <b-button variant="danger"> Cancelar </b-button> <b-button @click="validar()" variant="primary"> Pagar </b-button>
         </b-col>
       </b-row>
     </template>
@@ -103,11 +107,14 @@ export default {
         folio:'FLA-210720',
         importeTotal:'300',
         porcentajePago:0,
-        saldoClienteAnterior:'',
-        SaldoClienteFinal:'',
+        saldoClienteAnterior:0,
+        SaldoClienteFinal:0,
         importeEfectivoTarjeta:0,
         importeMonedeto:0,
         cliente:''
+      },
+      cliente: {
+        saldoMonedero: 0
       }
     }
   },
@@ -149,13 +156,51 @@ export default {
           event.preventDefault();
       }
     },
-    pagar(){
-      this.pago.cliente = this.dataCliente.id
-      this.pago.SaldoClienteFinal = ((this.pago.importeTotal * this.pago.porcentajePago) / 100).toFixed(2)
-      console.log(this.pago)
+    validar(){
+      if(this.importeState(this.pago.importeTotal)){
+        if(this.pago.importeMonedeto <= this.dataCliente.saldoMonedero){
+          if((parseInt(this.pago.importeEfectivoTarjeta) + parseInt(this.pago.importeMonedeto)) == this.pago.importeTotal){
 
-      const path = 'http://127.0.0.1:8000/api/pago-descuento/'
-      
+            this.pago.cliente = this.dataCliente.id
+            let saldoRestante = (this.dataCliente.saldoMonedero - this.pago.importeMonedeto)
+            let saldoGenerado = ((this.pago.importeTotal * this.pago.porcentajePago) / 100).toFixed(2)
+            this.pago.SaldoClienteFinal = (parseInt(saldoRestante) + parseInt(saldoGenerado))
+            this.cliente.saldoMonedero = this.pago.SaldoClienteFinal
+            //Llamar función pagar()
+            this.pagar()
+            console.log('OK')
+
+          }else{
+            swal({
+              title: "Cantidades erroneas",
+              text: "   ",
+              icon: "error",
+              timer: 2000,
+              button: false,
+            });
+          }
+        }else{
+           swal({
+            title: "No cuenta con saldo suficiente para usar",
+            text: "   ",
+            icon: "error",
+            timer: 2000,
+            button: false,
+          });
+        }
+      }
+      else{
+        swal({
+         title: "Ingrese el importe Total",
+          text: "   ",
+          icon: "error",
+          timer: 2000,
+          button: false,
+        });
+      }
+    },
+    pagar(){
+      const path = `${process.env.BASE_URI}api/pago-descuento/`
       axios.post(path, this.pago).then((response) => {
         swal({
           title: "Guardado exitosamente",
@@ -164,9 +209,30 @@ export default {
           timer: 2000,
           button: false,
         });
+        const path = `${process.env.BASE_URI}api/clientes/${this.dataCliente.id}/`
+        axios.patch(path, this.cliente).then((res) => { //editar saldo de cliente
+          console.log(this.cliente)
+          this.resetForm()
+        })
+        .catch((error) => {console.log(error)})
+        
       })
       .catch((error) => {console.log(error)})
       
+    },
+    resetForm(){
+      this.dataCliente = []
+      this.codigo = ''
+      this.inputCodigo = false
+      this.pago.folio = 'FLA-210720',
+      this.pago.importeTotal = '',
+      this.pago.porcentajePago = 0,
+      this.pago.saldoClienteAnterior = '',
+      this.pago.SaldoClienteFinal = '',
+      this.pago.importeEfectivoTarjeta = 0,
+      this.pago.importeMonedeto = 0,
+      this.pago.cliente = ''
+      this.cliente.saldoMonedero = 0
     }
   }
 }
