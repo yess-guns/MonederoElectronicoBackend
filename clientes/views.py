@@ -4,11 +4,11 @@ from django.http import JsonResponse
 from .models import Clientes 
 # Create your views here.
 
-def view2(request, codigocli):    
-    qs = Clientes.objects.filter(codigo=codigocli)
+def getCliente(request, codigocli):    
+    dataCliente = Clientes.objects.filter(codigo=codigocli)
     #qs_json = serializers.serialize('json', qs)
     json_response = {}
-    for cliente in qs:
+    for cliente in dataCliente:
         json_response = {
             'id':cliente.pk, 
             'codigo':cliente.codigo,

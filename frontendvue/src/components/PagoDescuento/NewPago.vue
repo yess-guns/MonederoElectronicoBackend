@@ -124,12 +124,31 @@ export default {
       let codigo = this.codigo
       const path = `${process.env.BASE_URI}cliente/codigo/${codigo}/`
       axios.get(path).then((response) => {
-        this.dataCliente = response.data
-        this.pago.porcentajePago = this.dataCliente.porcentaje
-        this.pago.saldoClienteAnterior = this.dataCliente.saldoMonedero
-        this.pago.SaldoClienteFinal = this.dataCliente.saldoMonedero
-        this.inputCodigo = true
-        console.log(response.data)
+        if(JSON.stringify(response.data) != '{}'){
+          if(response.data.estatus == 1){
+            this.dataCliente = response.data
+            this.pago.porcentajePago = this.dataCliente.porcentaje
+            this.pago.saldoClienteAnterior = this.dataCliente.saldoMonedero
+            this.pago.SaldoClienteFinal = this.dataCliente.saldoMonedero
+            this.inputCodigo = true
+          }else if(response.data.estatus == 0){
+            swal({
+              title: "El cliente esta Inactivo",
+              text: "   ",
+              icon: "error",
+              timer: 2000,
+              button: false,
+            });
+          }
+        }else{
+          swal({
+            title: "El Cliente no existe",
+            text: "   ",
+            icon: "error",
+            timer: 2000,
+            button: false,
+          });
+        }
       })
     },
     codiState(codigo){
