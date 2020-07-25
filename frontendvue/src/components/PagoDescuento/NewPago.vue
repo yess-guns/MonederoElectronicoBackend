@@ -41,7 +41,7 @@
         </b-form-group>
       </b-col>
     </b-row>
-    <template v-if="dataCliente.length != 0">    
+    <template v-if="dataCliente.length != 0">{{importeEfecT}}
       <b-row>
         <b-col cols="12">
           <h4>Nombre del Cliente:</h4> {{`${dataCliente.nombreCliente} ${dataCliente.apellidosCliente}`}}
@@ -58,10 +58,11 @@
       </b-row>
       <b-row>
         <b-col md="4">
-          <h4>Importe efectivo</h4>
+          <h4>Importe en efectivo/tarjeta</h4>
           <b-form-group>
             <b-form-input
                 type="text"
+                disabled
                 v-model="pago.importeEfectivoTarjeta"
                 @keypress="restrigirChars($event)"
                 @paste.prevent
@@ -86,7 +87,7 @@
       </b-row>
       <b-row>
         <b-col>
-          <b-button variant="danger"> Cancelar </b-button> <b-button @click="validar()" variant="primary"> Pagar </b-button>
+          <b-button @click="resetForm()" variant="danger"> Cancelar </b-button> <b-button @click="validar()" variant="primary"> Pagar </b-button>
         </b-col>
       </b-row>
     </template>
@@ -101,7 +102,7 @@ export default {
   data () {
     return {
       dataCliente: [],
-      codigo: '1234567893',
+      codigo: '',
       inputCodigo: false,
       pago: {
         folio:'FLA-210720',
@@ -166,10 +167,9 @@ export default {
             let saldoGenerado = ((this.pago.importeTotal * this.pago.porcentajePago) / 100).toFixed(2)
             this.pago.SaldoClienteFinal = (parseInt(saldoRestante) + parseInt(saldoGenerado))
             this.cliente.saldoMonedero = this.pago.SaldoClienteFinal
+            this.pago.folio = this.getFolio()
             //Llamar función pagar()
             this.pagar()
-            console.log('OK')
-
           }else{
             swal({
               title: "Cantidades erroneas",
@@ -224,15 +224,43 @@ export default {
       this.dataCliente = []
       this.codigo = ''
       this.inputCodigo = false
-      this.pago.folio = 'FLA-210720',
-      this.pago.importeTotal = '',
+      this.pago.folio = '',
+      this.pago.importeTotal = 0,
       this.pago.porcentajePago = 0,
-      this.pago.saldoClienteAnterior = '',
-      this.pago.SaldoClienteFinal = '',
+      this.pago.saldoClienteAnterior = 0,
+      this.pago.SaldoClienteFinal = 0,
       this.pago.importeEfectivoTarjeta = 0,
       this.pago.importeMonedeto = 0,
-      this.pago.cliente = ''
+      this.pago.cliente = 0
       this.cliente.saldoMonedero = 0
+    },
+    getFolio(){
+      const dateTime = Date.now();
+      const timestamp = Math.floor(dateTime / 1000).toString();
+      var valor = timestamp.split('');
+
+      var date = new Date();
+      var year = date.getFullYear();
+      var month = date.getMonth()+1;
+      var dt = date.getDate();
+
+      if (dt < 10) {
+        dt = '0' + dt;
+      }
+      if (month < 10) {
+        month = '0' + month;
+      }
+      var arrayYear = year.toString().split('')
+      
+      var newYear = arrayYear[2]+arrayYear[3]
+      var nfecha = newYear + month + dt
+      var folio = nfecha+valor[5]+valor[6]+valor[7]+valor[8]+valor[9]
+      return folio
+    }
+  },
+  computed: {
+    importeEfecT(){
+      this.pago.importeEfectivoTarjeta = this.pago.importeTotal - this.pago.importeMonedeto
     }
   }
 }
