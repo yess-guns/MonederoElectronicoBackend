@@ -15,14 +15,18 @@
           $ {{ row.value.toFixed(2) }}
         </template>
         <template v-slot:cell(estatus)="row">
-          {{ row.value == 1 ? 'Activo' : 'Inactivo' }} 
+          <b-button :variant="row.value == 1 ? 'success' : 'danger'" size="sm">{{ row.value == 1 ? 'Activo' : 'Inactivo' }} </b-button>
+          
         </template>
         <template v-slot:cell(Acciones)="data">
-          <b-button @click="modalEdit(data.index)" variant="warning">Editar</b-button>
-          <b-button @click="deleteCli(clientes[data.index])"variant="danger">Eliminar</b-button>
+          <b-button @click="modalVer(data.index)" variant="info"><b-icon-person-circle></b-icon-person-circle> Ver</b-button>          
+          <b-button @click="modalEdit(data.index)" variant="warning"><b-icon-pencil-square></b-icon-pencil-square> Editar</b-button>
+          <b-button @click="modalEdit(data.index)" variant="secondary"><b-icon-receipt></b-icon-receipt> Pagos</b-button>          
+          
         </template>
       </b-table>
       <EditCliente ref="editCliente" @actualizarLIstCliente="getClientes"/>
+      <VerCliente ref="verInfoCliente"/>
     </b-row>    
   </b-container>  
 
@@ -31,13 +35,15 @@
 <script>
 import NuevoCliente from '@/components/Clientes/NuevoCliente'
 import EditCliente from '@/components/Clientes/EditCliente'
+import VerCliente from '@/components/Clientes/VerCliente'
 import axios from 'axios';
 import swal from 'sweetalert'; 
 
 export default {
   components: {
     NuevoCliente,
-    EditCliente
+    EditCliente,
+    VerCliente
   },
   data () {
     return {
@@ -46,7 +52,7 @@ export default {
           { key: 'nombreCliente', label: 'Nombre', sortable: true, sortDirection: 'desc' },
           { key: 'apellidosCliente', label: 'Apellidos' },
           { key: 'codigo', label: 'Código de barras', sortable: false, sortDirection: 'desc' },
-          { key: 'porcentaje', label: 'Porcentaje descuento ', sortable: false, class: 'text-center' },
+          { key: 'porcentaje', label: '% descuento ', sortable: false, class: 'text-center' },
           { key: 'saldoMonedero', label: 'Saldo en monedero', sortable: false, class: 'text-center' },
           { key: 'estatus', label: 'Estatus', sortable: false, class: 'text-center' },
           'Acciones',
@@ -64,33 +70,8 @@ export default {
     modalEdit(index){
       this.$refs.editCliente.verModalEditCli(this.clientes[index])
     },
-    deleteCli(data){
-      swal({
-        title: "¿Estas seguro de eliminar?",
-        text: `Cliente: ${data.nombreCliente} ${data.apellidosCliente}`,
-        icon: "warning",
-        buttons: true,
-        dangerMode: true,
-      })
-      .then((willDelete) => {
-        if (willDelete) {
-          const path = `${process.env.BASE_URI}api/clientes/${data.id}/`
-          axios.delete(path).then((response) => {
-            this.getClientes()
-            swal({
-              title: "Eliminado exitosamente",
-              text: "   ",
-              icon: "success",
-              timer: 2000,
-              button: false,
-            });
-          })
-          .catch((error) => {console.log(error)})
-          
-        } else {
-          
-        }
-      });
+    modalVer(index){
+      this.$refs.verInfoCliente.verModalCliente(this.clientes[index])
     }
   },
   created() {

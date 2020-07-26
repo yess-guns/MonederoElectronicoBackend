@@ -105,8 +105,8 @@ export default {
       codigo: '',
       inputCodigo: false,
       pago: {
-        folio:'FLA-210720',
-        importeTotal:'300',
+        folio:'',
+        importeTotal:0,
         porcentajePago:0,
         saldoClienteAnterior:0,
         SaldoClienteFinal:0,
