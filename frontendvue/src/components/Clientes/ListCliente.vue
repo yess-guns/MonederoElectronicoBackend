@@ -21,7 +21,7 @@
         <template v-slot:cell(Acciones)="data">
           <b-button @click="modalVer(data.index)" variant="info"><b-icon-person-circle></b-icon-person-circle> Ver</b-button>          
           <b-button @click="modalEdit(data.index)" variant="warning"><b-icon-pencil-square></b-icon-pencil-square> Editar</b-button>
-          <b-button @click="modalEdit(data.index)" variant="secondary"><b-icon-receipt></b-icon-receipt> Pagos</b-button>          
+          <b-button :to="{ name:'PagosCliente', params: {clienteId: data.item.id} }" variant="secondary"><b-icon-receipt></b-icon-receipt> Pagos</b-button>          
           
         </template>
       </b-table>
