@@ -1,21 +1,17 @@
 from django.shortcuts import render
 from django.core import serializers
 from django.http import JsonResponse
-from .models import Clientes 
+from .models import Clientes, PagoDescuento
 # Create your views here.
 
 def getCliente(request, codigocli):    
     dataCliente = Clientes.objects.filter(codigo=codigocli)
-    #qs_json = serializers.serialize('json', qs)
-    json_response = {}
-    for cliente in dataCliente:
-        json_response = {
-            'id':cliente.pk, 
-            'codigo':cliente.codigo,
-            'nombreCliente':cliente.nombreCliente,
-            'apellidosCliente':cliente.apellidosCliente,
-            'porcentaje':cliente.porcentaje,
-            'saldoMonedero':cliente.saldoMonedero,
-            'estatus':cliente.estatus,
-            }
+    json_response = {'cliente': list(dataCliente.values('id','codigo','nombreCliente','apellidosCliente','porcentaje','saldoMonedero','estatus'))}
+    return JsonResponse(json_response)
+
+def getPagosCliente(request, idCliente):    
+    dataCliente = Clientes.objects.filter(id=idCliente)
+    dataPagos = PagoDescuento.objects.filter(cliente=idCliente)
+
+    json_response = {'cliente': list(dataCliente.values('id','codigo','nombreCliente','apellidosCliente','porcentaje','saldoMonedero','estatus')), 'pagos': list(dataPagos.values('folio','fecha','importeTotal','porcentajePago','saldoClienteAnterior','SaldoClienteFinal','importeEfectivoTarjeta','importeMonedeto'))}
     return JsonResponse(json_response)
