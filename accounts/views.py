@@ -18,14 +18,16 @@ def createUser(request):
         user.is_staff = True
         user.save()
         return JsonResponse({'response':'Bien'})
-
+@csrf_exempt 
 def auntentificar(request):
-    user = auth.authenticate(username='Richard', password='Lunes123')
+    user = request.POST['user']
+    password = request.POST['pass']
+    user = auth.authenticate(username=user, password=password)
     if user is not None:
         auth.login(request, user)
-        return JsonResponse({'response':'ha iniciado sesión'})
+        return JsonResponse({'response':'OK'})
     else:
-        return JsonResponse({'response':'usuario incorrecto'})
+        return JsonResponse({'response':'err'})
 
 def logout(request):
     do_logout(request)

@@ -99,6 +99,7 @@ import axios from 'axios';
 import swal from 'sweetalert'; 
 
 export default {
+  name: 'NewPago',
   data () {
     return {
       dataCliente: [],
