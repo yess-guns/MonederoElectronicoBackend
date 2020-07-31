@@ -3,16 +3,19 @@ from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.contrib import auth
 from django.contrib.auth import logout as do_logout
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here. 
-
+@csrf_exempt 
 def createUser(request):
-    dataUser = User.objects.filter(username='Richard')
+    nombre = request.POST['nombre']
+    password = request.POST['pass']
+    dataUser = User.objects.filter(username=nombre)
     if dataUser:
         return JsonResponse({'response':'Existe'})
     else:
-        user = User.objects.create_user(username='Richard',password='Lunes123')
-        user.is_staff = False
+        user = User.objects.create_user(username=nombre,password=password)
+        user.is_staff = True
         user.save()
         return JsonResponse({'response':'Bien'})
 
