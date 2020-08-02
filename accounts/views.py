@@ -22,10 +22,11 @@ def createUser(request):
 def auntentificar(request):
     user = request.POST['user']
     password = request.POST['pass']
-    user = auth.authenticate(username=user, password=password)
-    if user is not None:
-        auth.login(request, user)
-        return JsonResponse({'response':'OK'})
+    validar = auth.authenticate(username=user, password=password)
+    if validar is not None:
+        #auth.login(request, user)
+        dataUser = User.objects.filter(username=user)
+        return JsonResponse({'response':'OK','dataUser': list(dataUser.values('first_name','last_name','is_staff'))})
     else:
         return JsonResponse({'response':'err'})
 

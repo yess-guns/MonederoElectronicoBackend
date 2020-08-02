@@ -282,6 +282,20 @@ export default {
     importeEfecT(){
       this.pago.importeEfectivoTarjeta = this.pago.importeTotal - this.pago.importeMonedeto
     }
+  },
+  created(){
+    let dataUser = JSON.parse(localStorage.getItem("Usuario"))
+    if(dataUser != null){
+      if(dataUser.tipo == false){
+        //usuario cajero
+        alert('cajero')
+      }else{//usuario admin
+        // redirigir a admin
+        alert('admin')
+      }
+    }else{//no esta logueado
+      this.$router.push('login')
+    }
   }
 }
 </script>

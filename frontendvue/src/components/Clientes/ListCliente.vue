@@ -56,13 +56,22 @@ export default {
           { key: 'saldoMonedero', label: 'Saldo en monedero', sortable: false, class: 'text-center' },
           { key: 'estatus', label: 'Estatus', sortable: false, class: 'text-center' },
           'Acciones',
-        ]
+        ],
+        dataUser: {}
     }
   },
   methods: {
     getClientes(){
+      console.log('-----------')
+      console.log(this.dataUser)
+      console.log('-----------')
+      let auth = {
+        headers: {
+          'Authorization': `Token ${this.dataUser.token}`
+        }
+      }
       const path = `${process.env.BASE_URI}api/clientes/`
-      axios.get(path).then((response) => {
+      axios.get(path, auth).then((response) => {
         this.clientes = response.data
         console.log(response.data)
       })
@@ -75,6 +84,14 @@ export default {
     }
   },
   created() {
+    this.dataUser = JSON.parse(localStorage.getItem("Usuario"))
+    if(this.dataUser != null){
+      if(this.dataUser.logged){
+        //esta logueado
+      }
+    }else{
+      this.$router.push('login')
+    }
     this.getClientes()
   }
 }
