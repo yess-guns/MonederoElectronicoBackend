@@ -43,8 +43,8 @@ export default {
   data () {
     return {
       data:  {
-        username: "Papacito",
-        password: "123123"
+        username: "",
+        password: ""
       }
     }
   },
