@@ -79,9 +79,6 @@
       </div>
     </b-modal>  
   </b-container>
-  
-      
-
 </template>
 
 <script>
@@ -91,14 +88,15 @@ import swal from 'sweetalert';
 export default {
   data () {
     return {
-        form: {
-          nombreCliente: '',
-          apellidosCliente: '',
-          codigo: '',
-          telefono: ''
-        }        
+      form: {
+        nombreCliente: '',
+        apellidosCliente: '',
+        codigo: '',
+        telefono: ''
+      }        
     }
   },
+  props: ['configToken'],
   methods: {
     verModalNewCli(){
     this.$refs['my-modal'].show()
@@ -145,7 +143,7 @@ export default {
 
         const path = `${process.env.BASE_URI}api/clientes/`
       
-        axios.post(path, this.form).then((response) => {
+        axios.post(path, this.form, this.configToken).then((response) => {
           this.form.nombreCliente = ''
           this.form.apellidosCliente = ''
           this.form.codigo = ''
@@ -161,8 +159,6 @@ export default {
           });
         })
         .catch((error) => {console.log(error)})
-
-        
       }
     }
   },

@@ -96,7 +96,8 @@
 
 <script>
 import axios from 'axios';
-import swal from 'sweetalert'; 
+import swal from 'sweetalert';
+import { mapState, mapMutations } from 'vuex';
 
 export default {
   name: 'NewPago',
@@ -119,15 +120,16 @@ export default {
         saldoMonedero: 0
       }
     }
-  },
+  }, 
   methods: {
+    ...mapMutations(['validarSesion']),
     buscarCliente(){
       let codigo = this.codigo
       const path = `${process.env.BASE_URI}cliente/codigo/${codigo}/`
       axios.get(path).then((response) => {
-        if(JSON.stringify(response.data) != '{}'){
-          if(response.data.estatus == 1){
-            this.dataCliente = response.data
+        if(response.data.cliente.length != 0){
+          if(response.data.cliente[0].estatus == 1){
+            this.dataCliente = response.data.cliente[0]
             this.pago.porcentajePago = this.dataCliente.porcentaje
             this.pago.saldoClienteAnterior = this.dataCliente.saldoMonedero
             this.pago.SaldoClienteFinal = this.dataCliente.saldoMonedero
@@ -221,7 +223,7 @@ export default {
     },
     pagar(){
       const path = `${process.env.BASE_URI}api/pago-descuento/`
-      axios.post(path, this.pago).then((response) => {
+      axios.post(path, this.pago, this.configToken).then((response) => {
         swal({
           title: "Guardado exitosamente",
           text: "   ",
@@ -230,7 +232,7 @@ export default {
           button: false,
         });
         const path = `${process.env.BASE_URI}api/clientes/${this.dataCliente.id}/`
-        axios.patch(path, this.cliente).then((res) => { //editar saldo de cliente
+        axios.patch(path, this.cliente, this.configToken).then((res) => { //editar saldo de cliente
           console.log(this.cliente)
           this.resetForm()
         })
@@ -279,21 +281,14 @@ export default {
     }
   },
   computed: {
+    ...mapState(['configToken']),
     importeEfecT(){
       this.pago.importeEfectivoTarjeta = this.pago.importeTotal - this.pago.importeMonedeto
     }
   },
   created(){
-    let dataUser = JSON.parse(localStorage.getItem("Usuario"))
-    if(dataUser != null){
-      if(dataUser.tipo == false){
-        //usuario cajero
-        alert('cajero')
-      }else{//usuario admin
-        // redirigir a admin
-        alert('admin')
-      }
-    }else{//no esta logueado
+    this.validarSesion()
+    if(JSON.stringify(this.userData) == '{}'){//no esta logueado
       this.$router.push('login')
     }
   }

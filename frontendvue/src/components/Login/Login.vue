@@ -36,6 +36,7 @@
 <script>
 import axios from 'axios';
 import swal from 'sweetalert'; 
+import { mapState, mapMutations } from 'vuex';
 
 export default {
   name: 'Login',
@@ -48,6 +49,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['validarSesion']),
     async login(){
       const path = `${process.env.BASE_URI}accounts/auntentificar/`
       let datos = new FormData();
@@ -89,14 +91,15 @@ export default {
       }  
     }
   },
+  computed: {
+    ...mapState(['userData']),
+  },  
   created(){
-    let dataUser = JSON.parse(localStorage.getItem("Usuario"))
-    if(dataUser != null){
-      if(dataUser.logged){//esta logueado
-        this.$router.push('nuevo-pago')
-      }
-    }else{
+    this.validarSesion()
+    if(JSON.stringify(this.userData) == '{}'){
       //no esta logueado
+    }else{
+      this.$router.push('nuevo-pago')
     }
   }
 }

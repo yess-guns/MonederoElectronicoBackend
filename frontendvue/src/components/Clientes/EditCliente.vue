@@ -96,9 +96,6 @@
       </div>
     </b-modal>  
   </b-container>
-  
-      
-
 </template>
 
 <script>
@@ -119,6 +116,7 @@ export default {
         }        
     }
   },
+  props: ['configToken'],
   methods: {
     verModalEditCli(datosCli){
       this.id = datosCli.id
@@ -180,7 +178,7 @@ export default {
       if(this.codiState(this.form.codigo) && this.nombreState(this.form.nombreCliente) && this.apeState(this.form.apellidosCliente) && this.telState(this.form.telefono) && this.porcenState(this.form.porcentaje)){
 
         const path = `${process.env.BASE_URI}api/clientes/${this.id}/`      
-        axios.put(path, this.form).then((response) => {
+        axios.put(path, this.form, this.configToken).then((response) => {
           this.$refs['my-modal-edit'].hide()
           swal("Guardado exitosamente", "", "success")
           this.$emit('actualizarLIstCliente')
@@ -192,9 +190,7 @@ export default {
             button: false,
           });
         })
-        .catch((error) => {console.log(error)})
-
-        
+        .catch((error) => {console.log(error)}) 
       }
     }
   },

@@ -3,7 +3,7 @@
     <b-row>
       <b-col>
         <h1>Clientes</h1>
-        <NuevoCliente @actualizarLIstCliente="getClientes"/>
+        <NuevoCliente :configToken="configToken" @actualizarLIstCliente="getClientes"/>
       </b-col>
     </b-row>
     <b-row>
@@ -25,7 +25,7 @@
           
         </template>
       </b-table>
-      <EditCliente ref="editCliente" @actualizarLIstCliente="getClientes"/>
+      <EditCliente ref="editCliente" :configToken="configToken" @actualizarLIstCliente="getClientes"/>
       <VerCliente ref="verInfoCliente"/>
     </b-row>    
   </b-container>  
@@ -37,7 +37,8 @@ import NuevoCliente from '@/components/Clientes/NuevoCliente'
 import EditCliente from '@/components/Clientes/EditCliente'
 import VerCliente from '@/components/Clientes/VerCliente'
 import axios from 'axios';
-import swal from 'sweetalert'; 
+import swal from 'sweetalert';
+import { mapState, mapMutations } from 'vuex';
 
 export default {
   components: {
@@ -56,22 +57,18 @@ export default {
           { key: 'saldoMonedero', label: 'Saldo en monedero', sortable: false, class: 'text-center' },
           { key: 'estatus', label: 'Estatus', sortable: false, class: 'text-center' },
           'Acciones',
-        ],
-        dataUser: {}
+        ]
     }
   },
+  computed: {
+    ...mapState(['configToken']),
+  },
   methods: {
+    ...mapMutations(['validarSesion']),
     getClientes(){
-      console.log('-----------')
-      console.log(this.dataUser)
-      console.log('-----------')
-      let auth = {
-        headers: {
-          'Authorization': `Token ${this.dataUser.token}`
-        }
-      }
+      console.log(this.configToken)
       const path = `${process.env.BASE_URI}api/clientes/`
-      axios.get(path, auth).then((response) => {
+      axios.get(path, this.configToken).then((response) => {
         this.clientes = response.data
         console.log(response.data)
       })
@@ -84,15 +81,12 @@ export default {
     }
   },
   created() {
-    this.dataUser = JSON.parse(localStorage.getItem("Usuario"))
-    if(this.dataUser != null){
-      if(this.dataUser.logged){
-        //esta logueado
-      }
-    }else{
+    this.validarSesion()
+    if(JSON.stringify(this.userData) == '{}'){//no esta logueado
       this.$router.push('login')
+    }else{
+      this.getClientes()
     }
-    this.getClientes()
   }
 }
 </script>
