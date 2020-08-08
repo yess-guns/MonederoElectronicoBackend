@@ -19,14 +19,17 @@
           </div>
         </template>
           <div class="px-3 py-2">
-            <p>
-              Usser: {{userData.nombre}}
-            </p>
+            <h5>
+              <b-icon-person-circle></b-icon-person-circle> {{userData.nombre}} 
+            </h5>
+            <p class="text-right">{{ userData.tipo ? 'Admin' : 'Cajero' }}</p>
+            <hr>
             <nav class="mb-3">
               <b-nav vertical>
-                <b-nav-item active>Nuevo pago</b-nav-item>
-                <b-nav-item href="#link-1">Clientes</b-nav-item>
-                <b-nav-item href="#link-2">Pagos</b-nav-item>
+                <b-nav-item :to="{ name:'NewPago' }" v-if="!userData.tipo">Nuevo pago</b-nav-item>
+                <b-nav-item :to="{ name:'ListCliente' }" >Clientes</b-nav-item>
+                <b-nav-item :to="{ name:'ReportePagos' }" v-if="userData.tipo">Reporte Pagos</b-nav-item>
+                <b-nav-item :to="{ name:'Usuarios' }" v-if="userData.tipo">Usuarios</b-nav-item>
               </b-nav>
             </nav>
           </div>
@@ -42,5 +45,21 @@
       return {};
     },
     props: ['userData'],
+    methods: {
+      ...mapMutations(['logOutVuex']),
+      logOut(){
+        this.logOutVuex()
+        swal({
+          title: "Sesión cerrada",
+          text: "   ",
+          icon: "success",
+          timer: 2000,
+          button: false,
+        });
+        //let esto = this
+        //setTimeout(function(){ esto.$router.push('login') }, 2000);
+        
+      }
+    },
   };
 </script>

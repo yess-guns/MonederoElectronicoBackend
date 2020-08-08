@@ -37,8 +37,9 @@ const store = new Vuex.Store({
         //no esta logueado
       }
     },
-    reset(state) {
-      state.contador = 0
+    logOutVuex(state) {
+      localStorage.removeItem('Usuario');
+      router.go('login')
     }
   },
   actions: {},

@@ -1,106 +1,113 @@
 <template>
-  <b-container>
-    <b-row class="my-3">
-      <b-col>
-        <h1>Nuevo Pago</h1>
-      </b-col>
-    </b-row>
-    <b-row>
-      <b-col>
-        <b-form-group label="Importe Total">
-          <b-form-input
-              type="text"
-              v-model="pago.importeTotal"
-              @keypress="restrigirChars($event)"
-              @paste.prevent
-              :state="importeState(pago.importeTotal)"
-              aria-describedby="input-live-help validar-importe"
-              placeholder="Ingrese el importe total">
-          </b-form-input>
-          <b-form-invalid-feedback id="validar-importe">
-            Debe ingresar el importe total
-          </b-form-invalid-feedback>
-        </b-form-group>
-      </b-col>
-      <b-col>
-        <b-form-group label="Escanea el código de la tarjeta">
-          <b-form-input
-              type="text"
-              v-model="codigo"
-              @keypress="restrigirChars($event)"
-              @paste.prevent
-              @keyup.enter="buscarCliente()"
-              :disabled="inputCodigo"
-              :state="codiState(codigo)"
-              aria-describedby="input-live-help validar-codigo"
-              placeholder="Código de la tarjeta">
-          </b-form-input>
-          <b-form-invalid-feedback id="validar-codigo">
-            Debe escanear ingresar los 10 digítos numericos de la tarjeta
-          </b-form-invalid-feedback>
-        </b-form-group>
-      </b-col>
-    </b-row>
-    <template v-if="dataCliente.length != 0">{{importeEfecT}}
-      <b-row>
-        <b-col cols="12">
-          <h4>Nombre del Cliente:</h4> {{`${dataCliente.nombreCliente} ${dataCliente.apellidosCliente}`}}
-        </b-col>
-        <b-col cols="12">
-          <h4>Saldo:</h4> $ {{pago.saldoClienteAnterior.toFixed(2)}}
-        </b-col>
-        <b-col cols="12">
-          <h4>Porcentaje de descuento:</h4> {{pago.porcentajePago}}%
-        </b-col>
-        <b-col cols="12">
-          <h4>Total a crédito:</h4> $ {{ ((pago.importeTotal * pago.porcentajePago) / 100).toFixed(2) }}
-        </b-col>
-      </b-row>
-      <b-row>
-        <b-col md="4">
-          <h4>Importe en efectivo/tarjeta</h4>
-          <b-form-group>
-            <b-form-input
-                type="text"
-                disabled
-                v-model="pago.importeEfectivoTarjeta"
-                @keypress="restrigirChars($event)"
-                @paste.prevent
-                placeholder="Ingrese el importe en efectivo">
-            </b-form-input>
-          </b-form-group>
-        </b-col>
-      </b-row>
-      <b-row>
-        <b-col md="4">
-          <h4>Cantidad en Monedero Electrónico</h4>
-          <b-form-group>
-            <b-form-input
-                type="text"
-                v-model="pago.importeMonedeto"
-                @keypress="restrigirChars($event)"
-                @paste.prevent
-                placeholder="Ingrese la cantidad que desee usar">
-            </b-form-input>
-          </b-form-group>
+  <div>
+    <Navbar :userData="userData" />
+    <b-container>
+      <b-row class="my-3">
+        <b-col>
+          <h1>Nuevo Pago</h1>
         </b-col>
       </b-row>
       <b-row>
         <b-col>
-          <b-button @click="resetForm()" variant="danger"> Cancelar </b-button> <b-button @click="validar()" variant="primary"> Pagar </b-button>
+          <b-form-group label="Importe Total">
+            <b-form-input
+                type="text"
+                v-model="pago.importeTotal"
+                @keypress="restrigirChars($event)"
+                @paste.prevent
+                :state="importeState(pago.importeTotal)"
+                aria-describedby="input-live-help validar-importe"
+                placeholder="Ingrese el importe total">
+            </b-form-input>
+            <b-form-invalid-feedback id="validar-importe">
+              Debe ingresar el importe total
+            </b-form-invalid-feedback>
+          </b-form-group>
+        </b-col>
+        <b-col>
+          <b-form-group label="Escanea el código de la tarjeta">
+            <b-form-input
+                type="text"
+                v-model="codigo"
+                @keypress="restrigirChars($event)"
+                @paste.prevent
+                @keyup.enter="buscarCliente()"
+                :disabled="inputCodigo"
+                :state="codiState(codigo)"
+                aria-describedby="input-live-help validar-codigo"
+                placeholder="Código de la tarjeta">
+            </b-form-input>
+            <b-form-invalid-feedback id="validar-codigo">
+              Debe escanear ingresar los 10 digítos numericos de la tarjeta
+            </b-form-invalid-feedback>
+          </b-form-group>
         </b-col>
       </b-row>
-    </template>
-  </b-container>
+      <template v-if="dataCliente.length != 0">{{importeEfecT}}
+        <b-row>
+          <b-col cols="12">
+            <h4>Nombre del Cliente:</h4> {{`${dataCliente.nombreCliente} ${dataCliente.apellidosCliente}`}}
+          </b-col>
+          <b-col cols="12">
+            <h4>Saldo:</h4> $ {{pago.saldoClienteAnterior.toFixed(2)}}
+          </b-col>
+          <b-col cols="12">
+            <h4>Porcentaje de descuento:</h4> {{pago.porcentajePago}}%
+          </b-col>
+          <b-col cols="12">
+            <h4>Total a crédito:</h4> $ {{ ((pago.importeTotal * pago.porcentajePago) / 100).toFixed(2) }}
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col md="4">
+            <h4>Importe en efectivo/tarjeta</h4>
+            <b-form-group>
+              <b-form-input
+                  type="text"
+                  disabled
+                  v-model="pago.importeEfectivoTarjeta"
+                  @keypress="restrigirChars($event)"
+                  @paste.prevent
+                  placeholder="Ingrese el importe en efectivo">
+              </b-form-input>
+            </b-form-group>
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col md="4">
+            <h4>Cantidad en Monedero Electrónico</h4>
+            <b-form-group>
+              <b-form-input
+                  type="text"
+                  v-model="pago.importeMonedeto"
+                  @keypress="restrigirChars($event)"
+                  @paste.prevent
+                  placeholder="Ingrese la cantidad que desee usar">
+              </b-form-input>
+            </b-form-group>
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col>
+            <b-button @click="resetForm()" variant="danger"> Cancelar </b-button> <b-button @click="validar()" variant="primary"> Pagar </b-button>
+          </b-col>
+        </b-row>
+      </template>
+    </b-container>
+  </div>
 </template>
 
 <script>
+import Navbar from '@/components/Includes/Navbar'
 import axios from 'axios';
 import swal from 'sweetalert';
 import { mapState, mapMutations } from 'vuex';
 
 export default {
   name: 'NewPago',
+  components: {
+    Navbar
+  },
   data () {
     return {
       dataCliente: [],
@@ -281,7 +288,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['configToken']),
+    ...mapState(['userData','configToken']),
     importeEfecT(){
       this.pago.importeEfectivoTarjeta = this.pago.importeTotal - this.pago.importeMonedeto
     }
@@ -290,6 +297,12 @@ export default {
     this.validarSesion()
     if(JSON.stringify(this.userData) == '{}'){//no esta logueado
       this.$router.push('login')
+    }else{
+      if(this.userData.tipo){//Es admin
+        this.$router.push('reporte-pagos')
+      }else{//es cajero
+
+      }
     }
   }
 }

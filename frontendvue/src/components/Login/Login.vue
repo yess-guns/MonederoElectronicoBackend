@@ -79,7 +79,8 @@ export default {
           button: false,
         });
         let esto = this
-        setTimeout(function(){ esto.$router.push('nuevo-pago') }, 2000);
+        let modulo = user.is_staff ? 'reporte-pagos' : 'nuevo-pago'
+        setTimeout(function(){ esto.$router.push(modulo) }, 2000);
       }else if(res.data.response == 'err'){
         swal({
           title: "Usuario o contraseña incorrectos",
@@ -99,7 +100,11 @@ export default {
     if(JSON.stringify(this.userData) == '{}'){
       //no esta logueado
     }else{
-      this.$router.push('nuevo-pago')
+       if(this.userData.tipo){//Es admin
+        this.$router.push('reporte-pagos')
+      }else{//es cajero
+        this.$router.push('nuevo-pago')
+      }
     }
   }
 }
