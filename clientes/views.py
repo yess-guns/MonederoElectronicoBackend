@@ -15,3 +15,9 @@ def getPagosCliente(request, idCliente):
 
     json_response = {'cliente': list(dataCliente.values('id','codigo','nombreCliente','apellidosCliente','porcentaje','saldoMonedero','estatus')), 'pagos': list(dataPagos.values('folio','fecha','importeTotal','porcentajePago','saldoClienteAnterior','SaldoClienteFinal','importeEfectivoTarjeta','importeMonedeto'))}
     return JsonResponse(json_response)
+
+def getPagosXdia(request, fecha):
+    dataPagos = PagoDescuento.objects.filter(fecha=fecha)
+
+    json_response = {'pagos': list(dataPagos.values('folio','fecha','importeTotal','porcentajePago','importeEfectivoTarjeta','importeMonedeto'))}
+    return JsonResponse(json_response)

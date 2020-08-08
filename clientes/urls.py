@@ -14,4 +14,5 @@ urlpatterns = route.urls
 prueba_patterns = ([
     path('codigo/<codigocli>/',clientes.getCliente),
     path('pagos/<int:idCliente>/',clientes.getPagosCliente),
+    path('getpagos/<fecha>/',clientes.getPagosXdia),
 ],"clientes")
