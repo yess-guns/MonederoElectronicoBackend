@@ -1,36 +1,37 @@
 <template>
-  <b-container>
-    <b-row class="justify-content-md-center mt-5">
-      <b-col cols="5" class="text-center"><h1>Login</h1></b-col>
-    </b-row>
-    <b-row class="justify-content-md-center mt-5">
-      <b-col cols="5">
-        <b-form-group label="Usuario">
-          <b-form-input
-              type="text"
-              v-model="data.username"
+  <div class="container h-100">
+		<div class="d-flex justify-content-center h-100">
+			<div class="user_card">
+				<div class="d-flex justify-content-center">
+					<div class="brand_logo_container">
+						<img src="@/img/logo.png" class="brand_logo" alt="Logo">
+					</div>
+				</div>
+				<div class="d-flex justify-content-center form_container">
+					<form>
+						<div class="input-group mb-3">
+							<div class="input-group-append">
+								<span class="input-group-text"><i class="fas fa-user"></i></span>
+							</div>
+							<input type="text" name="" class="form-control input_user" v-model="data.username"
               placeholder="Ingrese su nombre de usuario">
-          </b-form-input>
-        </b-form-group>
-      </b-col>
-    </b-row>
-    <b-row class="justify-content-md-center mt-5">
-      <b-col cols="5">
-        <b-form-group label="Contraseña">
-          <b-form-input
-              type="password"
+						</div><br>
+						<div class="input-group mb-2">
+							<div class="input-group-append">
+								<span class="input-group-text"><i class="fas fa-key"></i></span>
+							</div>
+							<input type="password" name="" class="form-control input_pass"
               v-model="data.password"
               placeholder="Ingrese su contraseña">
-          </b-form-input>
-        </b-form-group>
-      </b-col>
-    </b-row>
-    <b-row class="justify-content-md-center mt-5">
-      <b-col cols="5" class="text-center">
-        <b-button @click="login()" variant="primary">Ingresar</b-button>
-      </b-col>
-    </b-row>
-  </b-container>
+						</div><br><br>
+						<div class="d-flex justify-content-center mt-3 login_container">
+				 	  <button type="button" @click="login()" name="button" class="btn login_btn">Ingresar</button>
+				   </div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script>
@@ -111,19 +112,77 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h1, h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
+<style>
+	body,
+		html {
+			margin: 0;
+			padding: 0;
+			height: 100%;
+			background: #fff !important;
+		}
+		.user_card {
+			height: 400px;
+			width: 350px;
+			margin-top: auto;
+			margin-bottom: auto;
+			background: #f39c12;
+			position: relative;
+			display: flex;
+			justify-content: center;
+			flex-direction: column;
+			padding: 10px;
+			box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+			-webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+			-moz-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+			border-radius: 5px;
+
+		}
+		.brand_logo_container {
+			position: absolute;
+			height: 170px;
+			width: 170px;
+			top: -75px;
+			border-radius: 50%;
+			background: #fff;
+			padding: 10px;
+			text-align: center;
+		}
+		.brand_logo {
+			height: 150px;
+			width: 150px;
+			border-radius: 50%;
+			border: 2px solid white;
+		}
+		.form_container {
+			margin-top: 100px;
+		}
+		.login_btn {
+			width: 100%;
+			background: #c0392b !important;
+			color: white !important;
+		}
+		.login_btn:focus {
+			box-shadow: none !important;
+			outline: 0px !important;
+		}
+		.login_container {
+			padding: 0 2rem;
+		}
+		.input-group-text {
+			background: #c0392b !important;
+			color: white !important;
+			border: 0 !important;
+			border-radius: 0.25rem 0 0 0.25rem !important;
+		}
+		.input_user,
+		.input_pass:focus {
+			box-shadow: none !important;
+			outline: 0px !important;
+		}
+		.custom-checkbox .custom-control-input:checked~.custom-control-label::before {
+			background-color: #c0392b !important;
+		}
+    .container{
+      margin-top: 100px;
+    }
 </style>

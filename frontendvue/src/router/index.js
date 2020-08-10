@@ -6,6 +6,7 @@ import ListCliente from '@/components/Clientes/ListCliente'
 import PagosCliente from '@/components/Clientes/PagosCliente'
 import Login from '@/components/Login/Login'
 import ReportePagos from '@/components/Admin/ReportePagos'
+import Usuarios from '@/components/Admin/Usuarios'
 
 Vue.use(Router)
 
@@ -35,6 +36,11 @@ export default new Router({
       path: '/reporte-pagos',
       name: 'ReportePagos',
       component: ReportePagos
+    },
+    {
+      path: '/usuarios',
+      name: 'Usuarios',
+      component: Usuarios
     }
   ],
   mode: 'history'

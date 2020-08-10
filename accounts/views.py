@@ -9,15 +9,24 @@ from django.views.decorators.csrf import csrf_exempt
 @csrf_exempt 
 def createUser(request):
     nombre = request.POST['nombre']
-    password = request.POST['pass']
-    dataUser = User.objects.filter(username=nombre)
+    apellidos = request.POST['apellidos']
+    username = request.POST['username']
+    password = request.POST['password']
+    tipo = request.POST['tipo']
+    """print(nombre)
+    print(apellidos)
+    print(username)
+    print(password)
+    print(tipo)"""
+
+    dataUser = User.objects.filter(username=username)
     if dataUser:
         return JsonResponse({'response':'Existe'})
     else:
-        user = User.objects.create_user(username=nombre,password=password)
-        user.is_staff = True
+        user = User.objects.create_user(username=username,password=password, first_name=nombre, last_name=apellidos)
+        user.is_staff = True if tipo == '1' else False
         user.save()
-        return JsonResponse({'response':'Bien'})
+        return JsonResponse({'response':'OK'})
 @csrf_exempt 
 def auntentificar(request):
     user = request.POST['user']
@@ -33,3 +42,36 @@ def auntentificar(request):
 def logout(request):
     do_logout(request)
     return JsonResponse({'response':'Sesión cerrada'})
+
+def getUsers(request):    
+    dataUsers = User.objects.all()
+    return JsonResponse({'dataUsers': list(dataUsers.values('id','first_name','last_name','username','is_staff'))})
+
+@csrf_exempt 
+def updateUser(request):
+    campo = request.POST['campo']
+    idUser = request.POST['idUser']
+    valor = request.POST['valor']
+
+    user = User.objects.get(id=idUser)
+    if campo == 'nombre':        
+        user.first_name = valor
+        user.save()
+        return JsonResponse({'response': 'OK'})
+    elif campo == 'apellidos':
+        user.last_name = valor
+        user.save()
+        return JsonResponse({'response': 'OK'})
+    elif campo == 'usuario':        
+        user.username = valor
+        user.save()
+        return JsonResponse({'response': 'OK'})
+    elif campo == 'pass':        
+        user.set_password(valor)
+        user.save()
+        return JsonResponse({'response': 'OK'})
+    elif campo == 'Tipo':
+        user.is_staff = True if valor == 1 else False
+        user.is_staff = False if valor == 0 else True
+        user.save()
+        return JsonResponse({'response': 'OK'})

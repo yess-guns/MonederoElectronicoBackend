@@ -177,8 +177,8 @@
           if (month < 10) {
             month = '0' + month;
           }
-          //this.fecha = `${year}-${month}-${dt}`
-          this.fecha = '2020-07-25'
+          this.fecha = `${year}-${month}-${dt}`
+          //this.fecha = '2020-07-25'
           this.getPagosXdia()
         }else{//es cajero
           this.$router.push('nuevo-pago')
